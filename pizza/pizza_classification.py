@@ -13,7 +13,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 class PizzaClassifier(metaclass=Singleton):
-    CLASSES = ["Pizza", "Non-Pizza"]
+    CLASSES = ["Non-Pizza", "Pizza"]
 
     def __init__(self, model_path=None):
         if model_path is None:

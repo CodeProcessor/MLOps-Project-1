@@ -147,7 +147,7 @@ if __name__ == '__main__':
     mlflow.log_param("lr_scheduler_gamma", lr_scheduler_gamma)
     exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=lr_scheduler_step_size, gamma=lr_scheduler_gamma)
 
-    epochs = 2
+    epochs = 25
     mlflow.log_param("epochs", epochs)
     model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler, num_epochs=epochs)
 
