@@ -1,5 +1,7 @@
 # MLOps Project 1
 
+#### Latest changes available in [dev](https://github.com/CodeProcessor/MLOps-Project-1/tree/dev) branch.
+
 ## Problem Statement
 
 This project is aims to build a model to predict an image consists of a pizza or not.
