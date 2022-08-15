@@ -15,6 +15,7 @@ RUN pip3 install .
 WORKDIR /app
 COPY main.py .
 
-ENV PIZZA_MODEL_PATH /tmp/pizza/resnet18_pizza_cls_model.pth
+COPY models /app/models
+ENV PIZZA_MODEL_PATH /app/models/resnet18_pizza_cls_model.pth
 
 CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0"]
