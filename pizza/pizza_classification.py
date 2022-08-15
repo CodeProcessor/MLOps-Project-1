@@ -6,8 +6,8 @@ import torch
 import torch.nn as nn
 from torchvision import models, transforms
 
-from custom_logging import logger
-from singleton import SingletonClass
+from pizza.custom_logging import logger
+from pizza.singleton import SingletonClass
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 

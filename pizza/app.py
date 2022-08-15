@@ -1,6 +1,6 @@
 import PIL
 
-from src.pizza_classification import PizzaClassifier
+from pizza.pizza_classification import PizzaClassifier
 
 
 def main():
