@@ -93,8 +93,8 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
             epoch_loss = running_loss / dataset_sizes[phase]
             epoch_acc = running_corrects.double() / dataset_sizes[phase]
 
-            mlflow.log_metric(f"{phase}_accuracy", epoch_acc, step=epoch + 1)
-            mlflow.log_metric(f"{phase}_loss", epoch_loss, step=epoch + 1)
+            mlflow.log_metric(f"{phase}_accuracy", float(epoch_acc), step=epoch + 1)
+            mlflow.log_metric(f"{phase}_loss", float(epoch_loss), step=epoch + 1)
             print(f'{phase} Loss: {epoch_loss:.4f} Acc: {epoch_acc:.4f}')
 
             # deep copy the model
@@ -113,11 +113,14 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
 
 if __name__ == '__main__':
     import mlflow
-    from azureml.core import Workspace
-
-    ws = Workspace.from_config()
-    uri = ws.get_mlflow_tracking_uri()
-    mlflow.set_tracking_uri(uri)
+    # Azure MLFLOW
+    # from azureml.core import Workspace
+    #
+    # ws = Workspace.from_config()
+    # uri = ws.get_mlflow_tracking_uri()
+    # mlflow.set_tracking_uri(uri)
+    MLFLOW_TRACKING_URI = "sqlite:///mlflow.db"
+    mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
     experiment_name = 'pizza_classification'
     mlflow.set_experiment(experiment_name)
 
@@ -147,7 +150,7 @@ if __name__ == '__main__':
     mlflow.log_param("lr_scheduler_gamma", lr_scheduler_gamma)
     exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=lr_scheduler_step_size, gamma=lr_scheduler_gamma)
 
-    epochs = 25
+    epochs = 5
     mlflow.log_param("epochs", epochs)
     model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler, num_epochs=epochs)
 
