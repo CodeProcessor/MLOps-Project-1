@@ -7,12 +7,12 @@ import torch.nn as nn
 from torchvision import models, transforms
 
 from pizza.custom_logging import logger
-from pizza.singleton import SingletonClass
+from pizza.singleton import Singleton
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
-class PizzaClassifier(SingletonClass):
+class PizzaClassifier(metaclass=Singleton):
     CLASSES = ["Pizza", "Non-Pizza"]
 
     def __init__(self, model_path=None):
