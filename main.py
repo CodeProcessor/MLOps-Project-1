@@ -6,7 +6,7 @@ from fastapi import FastAPI, UploadFile, File
 from pizza.pizza_classification import PizzaClassifier
 
 app = FastAPI()
-model_path = "/home/dulanj/Learn/MLOps-Project-1/pizza/resnet18_pizza_cls_model.pth"
+model_path = os.getenv("PIZZA_MODEL_PATH", "/home/dulanj/Learn/MLOps-Project-1/pizza/resnet18_pizza_cls_model.pth")
 pc = PizzaClassifier(model_path)
 
 
@@ -28,4 +28,4 @@ async def predict(
 
     image = PIL.Image.open(out_file_path)
     ret = pc.predict(image)
-    return {"message": f"{ret}"}
+    return {"class": f"{ret[0]}", "confidence": f"{ret[1]}"}

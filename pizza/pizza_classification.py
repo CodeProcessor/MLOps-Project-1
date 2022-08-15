@@ -17,7 +17,7 @@ class PizzaClassifier(metaclass=Singleton):
 
     def __init__(self, model_path=None):
         if model_path is None:
-            model_path = os.getenv("Pizza_Classifier_Model_Path", "resnet18_pizza_cls_model.pth")
+            model_path = os.getenv("PIZZA_MODEL_PATH", "resnet18_pizza_cls_model.pth")
         self.model = self.load_model(model_path)
         self.transform = transforms.Compose([
             transforms.Resize(256),
