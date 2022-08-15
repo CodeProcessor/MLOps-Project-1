@@ -3,7 +3,7 @@ from __future__ import print_function, division
 import copy
 import os
 import time
-
+from prefect import task, flow, get_run_logger
 import mlflow
 import torch
 import torch.backends.cudnn as cudnn
@@ -20,6 +20,7 @@ momentum = 0.9
 MLFLOW_TRACKING_URI = "sqlite:///mlflow.db"
 
 
+@task
 def get_data_loaders_and_image_datasets():
     data_transforms = {
         'train': transforms.Compose([
@@ -41,7 +42,7 @@ def get_data_loaders_and_image_datasets():
                    for x in ['train', 'val']}
     return dataloaders, image_datasets
 
-
+@task
 def get_model():
     model_ft = models.resnet18(pretrained=True)
     num_ftrs = model_ft.fc.in_features
@@ -52,7 +53,7 @@ def get_model():
     model_ft = model_ft.to(device)
     return model_ft
 
-
+@task
 def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_sizes, num_epochs=25):
     mlflow.log_param("epochs", num_epochs)
     since = time.time()
@@ -120,7 +121,7 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
     model.load_state_dict(best_model_wts)
     return model
 
-
+@task
 def save_model(model):
     filename = "resnet18_pizza_cls_model.pth"
     print(f"Saving model to {filename}")
@@ -128,14 +129,14 @@ def save_model(model):
     mlflow.log_artifact(filename)
     print("Model saved")
 
-
+@task
 def init_mlflow():
     mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
     experiment_name = 'pizza_classification'
     mlflow.set_experiment(experiment_name)
     mlflow.log_param("dataset", data_dir)
 
-
+@task
 def get_loss_optimizer_scheduler(model):
     # Observe that all parameters are being optimized
 
@@ -153,7 +154,7 @@ def get_loss_optimizer_scheduler(model):
     criterion = nn.CrossEntropyLoss()
     return criterion, optimizer, scheduler
 
-
+@flow
 def main():
     init_mlflow()
     model = get_model()
@@ -165,4 +166,18 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    from prefect.deployments import DeploymentSpec
+    from prefect.orion.schemas.schedules import CronSchedule
+    from prefect.flow_runners import SubprocessFlowRunner
+
+    DeploymentSpec(
+        name="scheduled-deployment",
+        flow=main,
+        schedule=CronSchedule(
+            cron="* * * * *",
+            timezone="Asia/Colombo"
+        ),
+        tags=["Cron Scheduled"],
+        flow_runner=SubprocessFlowRunner()
+    )
+    print("Flow started")
